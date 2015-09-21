@@ -20,7 +20,7 @@ function updateDNS(records) {
 
     console.log('Setting DNS for ' + name + ': ' + ip)
 
-    etcd.set(prefix + name, {host: ip})
+    etcd.set(prefix + name, JSON.stringify({host: ip}))
   })
 }
 
