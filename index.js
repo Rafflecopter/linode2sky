@@ -18,9 +18,10 @@ function updateDNS(records) {
     var ip = pair[0]
       , name = pair[1]
 
-    console.log('Setting DNS for ' + name + ': ' + ip)
-
-    etcd.set(prefix + name, JSON.stringify({host: ip}))
+    etcd.set(prefix + name, JSON.stringify({host: ip}), function (err) {
+      if (err) throw err
+      console.log('Setting DNS for ' + name + ': ' + ip)
+    })
   })
 }
 
