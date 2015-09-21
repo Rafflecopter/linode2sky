@@ -1,0 +1,25 @@
+{
+  "name": "linode2sky",
+  "version": "1.0.0",
+  "description": "send linode labels a A records in skydns",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yanatan16/linode2sky.git"
+  },
+  "author": "Jon Eisen <jon@joneisen.me>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yanatan16/linode2sky/issues"
+  },
+  "homepage": "https://github.com/yanatan16/linode2sky",
+  "dependencies": {
+    "async": "^1.4.2",
+    "minimist": "^1.2.0",
+    "node-etcd": "^4.2.1",
+    "request": "^2.62.0"
+  }
+}
