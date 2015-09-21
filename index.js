@@ -7,6 +7,7 @@ var args = require('minimist')(process.argv.slice(2))
   , prefix = args.prefix || '/skydns/'
   , prefix = prefix[prefix.length - 1] == '/' ? prefix : prefix + '/'
   , interval = args.interval || 300000
+  , serviceNsRgx = args.service_ns_regex ? new RegExp(args.service_ns_regex) : null
   , serviceNameRgx = args.service_name_regex ? new RegExp(args.service_name_regex) : null
   , serviceInstRgx = args.service_instance_regex ? new RegExp(args.service_instance_regex) : null
 
@@ -39,11 +40,14 @@ function namesToEntries(records, callback) {
       .filter(function (pair) { return serviceNameRgx.test(pair[0]) })
       .map(function (pair) {
         var svc = pair[0].match(serviceNameRgx)[1]
+          , ns = serviceNsRgx && serviceNsRgx.test(pair[0])
+                 ? pair[0].match(serviceNsRgx)[1]
+                 : null
           , inst = serviceInstRgx && serviceInstRgx.test(pair[0])
                    ? pair[0].match(serviceInstRgx)[1]
                    : pair[0]
 
-        return ['svc/' + svc + '/' + inst, pair[1]]
+        return ['svc/' + (ns ? ns + '/' : '') + svc + '/' + inst, pair[1]]
       }))
   }
 
@@ -52,8 +56,7 @@ function namesToEntries(records, callback) {
 
 function updateDNS(records, callback) {
   etcd.get(prefix, {recursive:true}, function (err, retval) {
-    if (err) throw err
-    var prekeylist = recurseToKeylist(retval)
+    var prekeylist = retval ? recurseToKeylist(retval) : []
       , prekeys = prekeylist.map(function (pair) { return pair[0] })
       , preobj = prekeylist.reduce(function (a, p) { a[p[0]] = p[1]; return a }, {})
       , postkeys = prekeylist.reduce(function (a, p) { a[p[0]] = true; return a }, {})
